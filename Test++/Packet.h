@@ -8,15 +8,25 @@ private:
 	std::vector<BYTE> data_;
 public:
 	// Constructors
-	Packet(void) {}
+	Packet(void) {
+	}
 
 	// Methods
 
 	// Getters
-	size_t Length(void) const { return header_length + data_.size(); }
-	size_t BodyLength(void) const { return data_.size(); }
+	size_t Length(void) const {
+		return header_length + data_.size();
+	}
 
-	std::vector<BYTE> Data(void) const { return data_; }
+	size_t BodyLength(void) const {
+		return data_.size();
+	}
 
-	~Packet(void) {}
+	std::vector<BYTE> Data(void) const {
+		return data_;
+	}
+
+	~Packet(void) {
+	}
 };
+

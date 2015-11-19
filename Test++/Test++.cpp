@@ -8,7 +8,7 @@ using boost::format;
 using std::cout;
 using std::endl;
 
-int _tmain(int argc, _TCHAR *argv[]) {
+int _tmain(int argc, _TCHAR* argv[]) {
 	// Create a client with ID 0.
 	Client clientSync(1);
 
@@ -21,3 +21,4 @@ int _tmain(int argc, _TCHAR *argv[]) {
 
 	return 0;
 }
+

@@ -63,13 +63,14 @@ namespace KryNet {
 			*imp_->socket,
 			endpoint_iter,
 			[this](boost::system::error_code ec, const tcp::resolver::iterator& it) {
-			if (!ec) {
-				imp_->connected = true;
-				Event_OnConnected(ConnectError::SUCCESS);
-			} else {
-				Event_OnConnected(ConnectError::FAILURE);
+				if (!ec) {
+					imp_->connected = true;
+					Event_OnConnected(ConnectError::SUCCESS);
+				} else {
+					Event_OnConnected(ConnectError::FAILURE);
+				}
 			}
-		});
+		);
 	}
 
 	bool ITCPClient::Connected() const {
@@ -80,3 +81,4 @@ namespace KryNet {
 
 	}
 }
+

@@ -44,3 +44,4 @@ namespace KryNet {
 		KRYNET_API virtual ~ITCPClient(void);
 	};
 }
+
