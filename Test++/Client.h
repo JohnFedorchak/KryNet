@@ -7,7 +7,7 @@ using boost::format;
 using std::cout;
 using std::endl;
 
-class Client : public ITCPClient {
+class Client : public TCP::IClient {
 	uint32_t identifier_;
 
 	std::string target_host_;
@@ -27,7 +27,7 @@ public:
 		target_host_ = szHost;
 		target_service_ = szService;
 
-		return ITCPClient::Connect(szHost, szService);
+		return IClient::Connect(szHost, szService);
 	}
 
 	// Getters

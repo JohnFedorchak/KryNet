@@ -14,6 +14,6 @@
 
 #include <boost/format.hpp>
 
-//#include "KryNet.h"
-#include "ITCPClient.h"
+#include "Packet.h"
+#include "TCP/IClient.h"
 

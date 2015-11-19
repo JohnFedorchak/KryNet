@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\TCP">
+      <UniqueIdentifier>{83834130-290f-4ac8-a0a2-9b201626f359}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TCP">
+      <UniqueIdentifier>{2f721f3d-29ca-44ec-8105-365f5bdcffa2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -24,7 +30,10 @@
     <ClInclude Include="KryNet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ITCPClient.h">
+    <ClInclude Include="TCP\IClient.h">
+      <Filter>Header Files\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,10 +44,13 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ITCPClient.cpp">
+    <ClCompile Include="KryNet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="KryNet.cpp">
+    <ClCompile Include="TCP\IClient.cpp">
+      <Filter>Source Files\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
