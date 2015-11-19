@@ -6,5 +6,17 @@
 
 #include <Windows.h>
 #include <WinSock2.h>
+#include <iostream>
+#include <string>
+#include <memory>
+#include <atomic>
 
 #pragma comment(lib, "ws2_32")
+
+#include <boost/asio.hpp>
+
+#ifdef KRYNET_EXPORTS
+#define KRYNET_API __declspec(dllexport)
+#else
+#define KRYNET_API __declspec(dllimport)
+#endif

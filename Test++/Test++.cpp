@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include <iostream>
+#include "Client.h"
 
 using namespace KryNet;
 
@@ -9,15 +9,20 @@ using std::cout;
 using std::endl;
 
 int _tmain(int argc, _TCHAR *argv[]) {
-	if (!KryNetInitialize()) {
-		cout << format("Could not initialize KryNet. Error = %1%") % KryNetGetLastError() << endl;
+	// Create a client with ID 0.
+	Client clientAsync(0), clientSync(1);
+
+	// (Asynchronous) Connect the client to a local server.
+	clientAsync.ConnectAsync("localhost", 31412);
+	while (!clientAsync.Connected()) {}
+
+	// (Synchronous) Connect the client to a local server.
+	if (!clientSync.Connect("localhost", 31412)) {
+		cout << "Could not connect client." << endl;
 		return 0;
 	}
 
-
-	if (!KryNetShutdown()) {
-		cout << format("Could not shutdown KryNet. Error = %1%") % KryNetGetLastError() << endl;
-	}
+	cout << "Exiting..." << endl;
 
 	return 0;
 }

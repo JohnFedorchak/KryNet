@@ -1,15 +1,9 @@
 #pragma once
 
-#ifdef KRYNET_EXPORTS
-#define KRYNET_API __declspec(dllexport)
-#else
-#define KRYNET_API __declspec(dllimport)
-#endif
+#include "stdafx.h"
 
 namespace KryNet {
-	int last_error_ = 0;
+	static int last_error_ = 0;
 
-	KRYNET_API bool KryNetInitialize(void);
-	KRYNET_API int KryNetGetLastError(void);
-	KRYNET_API bool KryNetShutdown(void);
+	inline KRYNET_API int KryNetGetLastError(void) { return last_error_; };
 }
