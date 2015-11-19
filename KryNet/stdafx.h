@@ -14,9 +14,4 @@
 #pragma comment(lib, "ws2_32")
 
 #include <boost/asio.hpp>
-
-#ifdef KRYNET_EXPORTS
-#define KRYNET_API __declspec(dllexport)
-#else
-#define KRYNET_API __declspec(dllimport)
-#endif
+#include <boost/thread.hpp>
