@@ -1,4 +1,5 @@
 #pragma once
+#include "PacketType.h"
 
 using namespace KryNet;
 
@@ -9,25 +10,9 @@ using std::endl;
 
 class Client : public TCP::IClient {
 	uint32_t identifier_;
-
-	std::string target_host_;
-	std::string target_service_;
 public:
 	// Constructors
 	Client(uint32_t identifier) : identifier_(identifier) {
-
-	}
-
-	// Methods
-	bool Connect(const std::string& szHost, uint16_t uPort) override {
-		return Connect(szHost, std::to_string(uPort));
-	}
-
-	bool Connect(const std::string& szHost, const std::string& szService) override {
-		target_host_ = szHost;
-		target_service_ = szService;
-
-		return IClient::Connect(szHost, szService);
 	}
 
 	// Getters
@@ -35,29 +20,57 @@ public:
 		return identifier_;
 	}
 
-	std::string TargetAddress(void) const {
-		return target_host_;
-	}
-
-	std::string TargetService(void) const {
-		return target_service_;
-	}
-
 	// Callbacks
 	void Client::Event_OnConnected(const ConnectError& error) override {
 		if (error == ConnectError::SUCCESS) {
-			cout << format("Client %1%: Connected to %2%:%3%!") % identifier_ % target_host_ % target_service_ << endl;
+			cout << format("Client %1%: Connected to %2%:%3%!") % identifier_ % RemoteAddress() % RemotePort() << endl;
+
+			// Create an info packet containing a string.
+			InfoPacket packet(InfoPacket::InfoType::STRING);
+			packet.PutBack("Hello!\r\n");
+
+			// Send the packet.
+			this->Send(packet);
 		} else {
-			cout << format("Client %1%: Could not connect to %2%:%3%.") % identifier_ % target_host_ % target_service_ << endl;
+			cout << format("Client %1%: Could not connect.") % identifier_ << endl;
 		}
 	}
 
-	void Client::Event_OnPacketReceived() override {
-		cout << format("Client %1%: Packet received!") % identifier_ << endl;
+	static std::string hexStr(const BYTE* array, size_t len) {
+		std::stringstream ss;
+
+		ss << std::hex << std::uppercase << std::setfill('0');
+
+		for (size_t i = 0; i < len; i++) {
+			ss << std::setw(2) << static_cast<int>(array[i]) << " ";
+		}
+
+		return ss.str();
 	}
 
-	void Client::Event_OnPacketSent() override {
-		cout << format("Client %1%: Packet sent!") % identifier_ << endl;
+	void Client::Event_OnPacketReceived(const Packet& packet) override {
+		cout << format("Client %1%: Packet received!") % identifier_ << endl;
+		cout << format("\tSize: %1% Bytes") % packet.Size() << endl;
+		cout << format("\tData: %1%") % hexStr(packet.Body(), packet.BodySize()) << endl;
+
+		MyPacket myPacket(packet);
+
+		switch (myPacket.Type()) {
+			case MyPacket::PacketType::INFO: {
+				InfoPacket infoPacket(myPacket);
+
+				switch (infoPacket.SubType()) {
+					case InfoPacket::InfoType::STRING:
+						cout << format("\tINFO::STRING = %1%") % (infoPacket.Data() + 2) << endl;
+						break;
+					default: break;
+				}
+				break;
+			}
+			case MyPacket::PacketType::REQUEST: break;
+			case MyPacket::PacketType::RESPONSE: break;
+			default: break;
+		}
 	}
 
 	void Client::Event_OnDisconnected() override {
@@ -71,7 +84,7 @@ public:
 };
 
 inline std::ostream& operator<<(std::ostream& os, const Client& client) {
-	os << format("[Client (ID=%1%)]") % client.identifier_;
+	os << format("[Client (ID=%1%) (Connected=%2%)]") % client.identifier_ % client.Connected();
 	return os;
 }
 

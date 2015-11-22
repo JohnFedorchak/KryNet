@@ -6,22 +6,25 @@
 #define KRYNET_API __declspec(dllimport)
 #endif
 
+//namespace boost {
+//	namespace system {
+//		class error_code;
+//	}
+//}
+
 namespace KryNet {
+	class Packet;
+
 	enum class ConnectError {
 		SUCCESS,
 		FAILURE
-	};
-
-	struct TargetAddress {
-		std::string host;
-		std::string port;
 	};
 
 	namespace TCP {
 		class IClient {
 			struct Imp;
 			std::unique_ptr<Imp> imp_;
-
+			
 		public:
 			// Constructors
 			KRYNET_API IClient(void);
@@ -33,16 +36,32 @@ namespace KryNet {
 			KRYNET_API void ConnectAsync(const std::string& szHost, uint16_t uPort);
 			KRYNET_API void ConnectAsync(const std::string& szHost, const std::string& szService);
 
+			KRYNET_API bool Send(Packet& packet);
+
+			KRYNET_API void Disconnect(void);
+
 			// Getters
 			KRYNET_API bool Connected(void) const;
 
+			KRYNET_API uint16_t LocalPort(void) const;
+			KRYNET_API std::string LocalAddress(void) const;
+
+			KRYNET_API uint16_t RemotePort(void) const;
+			KRYNET_API std::string RemoteAddress(void) const;
+
+			// Destructor
+			KRYNET_API virtual ~IClient(void);
+		private:
+			// Methods
+			void SetDisconnected(void);
+
+			void ReadHeader(void);
+			void ReadBody(void);
+
 			// Callbacks
 			virtual void Event_OnConnected(const ConnectError& error) = 0;
-			virtual void Event_OnPacketReceived(void) = 0;
-			virtual void Event_OnPacketSent(void) = 0;
+			virtual void Event_OnPacketReceived(const Packet& packet) = 0;
 			virtual void Event_OnDisconnected(void) = 0;
-
-			KRYNET_API virtual ~IClient(void);
 		};
 	}
 }

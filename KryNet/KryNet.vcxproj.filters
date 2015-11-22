@@ -27,9 +27,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="KryNet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TCP\IClient.h">
       <Filter>Header Files\TCP</Filter>
     </ClInclude>
@@ -42,9 +39,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="KryNet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TCP\IClient.cpp">
