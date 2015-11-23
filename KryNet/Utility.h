@@ -28,7 +28,12 @@ namespace KryNet {
 	public:
 		Utility(void);
 
-		static KRYNET_API std::string BytesToHex(const BYTE* pBytes, size_t uLen, LPCSTR szSeparator = "");
+		/// <summary>Converts a byte array into a string of hexadecimal values.</summary>
+		/// <param name="bytes">The byte array to convert.</param>
+		/// <param name="count">The number of bytes to convert.</param>
+		/// <param name="separator">The separator to insert between every byte.</param>
+		/// <returns>Returns a string containing the hexadecimal representation of the specified bytes.</returns>
+		static KRYNET_API std::string BytesToHex(const BYTE* bytes, size_t count, std::string separator = "");
 
 		~Utility(void);
 	};

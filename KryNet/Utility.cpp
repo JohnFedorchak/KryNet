@@ -22,13 +22,17 @@ namespace KryNet {
 	Utility::Utility() {
 	}
 
-	std::string Utility::BytesToHex(const BYTE* pBytes, size_t uLen, LPCSTR szSeparator) {
+	std::string Utility::BytesToHex(const BYTE* bytes, size_t len, std::string separator) {
 		std::stringstream ss;
 
 		ss << std::hex << std::uppercase << std::setfill('0');
 
-		for (size_t i = 0; i < uLen; i++) {
-			ss << std::setw(2) << static_cast<int>(pBytes[i]) << szSeparator;
+		for (size_t i = 0; i < len; i++) {
+			ss << std::setw(2) << static_cast<int>(bytes[i]);
+
+			if (i < len - 1) {
+				ss << separator;
+			}
 		}
 
 		return ss.str();

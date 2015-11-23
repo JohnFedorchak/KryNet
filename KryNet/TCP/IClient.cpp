@@ -44,7 +44,6 @@ namespace KryNet {
 			std::shared_ptr<tcp::socket> socket;
 			std::atomic_bool connected; // TODO: Make pointer?
 
-			//BYTE receive_data[Packet::header_size + Packet::max_body_length];
 			std::shared_ptr<Packet> receive_packet;
 		};
 
@@ -61,15 +60,18 @@ namespace KryNet {
 
 				auto endpoint_iter = imp_->resolver->resolve(query);
 
+				// Connect to any of the resolved endpoints.
 				boost::asio::connect(*imp_->socket, endpoint_iter);
 
 				imp_->connected = true;
 
+				// Asynchronously read a packet header.
 				ReadHeader();
 
+				// Call user-handled callback.
 				Event_OnConnected(ConnectError::SUCCESS);
 			} catch (std::exception&) {
-				//std::cerr << "Exception: " << e.what() << std::endl;
+				// Call user-handled callback.
 				Event_OnConnected(ConnectError::FAILURE);
 				return false;
 			}
@@ -86,15 +88,19 @@ namespace KryNet {
 
 			auto endpoint_iter = imp_->resolver->resolve(query);
 
+			// Connect to any of the resolved endpoints.
 			boost::asio::async_connect(
 				*imp_->socket,
 				endpoint_iter,
 				[this](const boost::system::error_code& ec, tcp::resolver::iterator iterator) {
+					// Make sure there was no error.
 					if (!ec) {
 						imp_->connected = true;
 
+						// Call user-handled callback.
 						Event_OnConnected(ConnectError::SUCCESS);
 					} else {
+						// Call user-handled callback.
 						Event_OnConnected(ConnectError::FAILURE);
 						SetDisconnected();
 					}
@@ -104,6 +110,7 @@ namespace KryNet {
 
 		bool IClient::Send(Packet& packet) {
 			try {
+				// Write the full packet data to the socket.
 				boost::asio::write(*imp_->socket, boost::asio::buffer(packet.Data(), packet.Size()));
 			} catch (std::exception&) {
 				SetDisconnected();
@@ -115,6 +122,7 @@ namespace KryNet {
 
 		void IClient::Disconnect() {
 			try {
+				// Shutdown the socket.
 				imp_->socket->shutdown(boost::asio::socket_base::shutdown_both);
 
 				SetDisconnected();
@@ -170,6 +178,7 @@ namespace KryNet {
 
 			}
 
+			// Call user-handled callback.
 			Event_OnDisconnected();
 		}
 
@@ -180,7 +189,9 @@ namespace KryNet {
 				*imp_->socket,
 				boost::asio::buffer(imp_->receive_packet->Data(), Packet::header_size),
 				[this](const boost::system::error_code& ec, size_t bytes_transferred) {
+					// Make sure there was no error and a full packet header has been received.
 					if (!ec && bytes_transferred == Packet::header_size) {
+						// Asynchronously read the rest of the packet.
 						ReadBody();
 					} else {
 						SetDisconnected();
@@ -194,9 +205,12 @@ namespace KryNet {
 				*imp_->socket,
 				boost::asio::buffer(imp_->receive_packet->Body(), imp_->receive_packet->DecodeHeader()),
 				[this](const boost::system::error_code& ec, size_t bytes_transferred) {
+					// Make sure there was no error and a full packet has been received.
 					if (!ec && bytes_transferred == imp_->receive_packet->DecodeHeader()) {
+						// Call user-handled callback.
 						Event_OnPacketReceived(*imp_->receive_packet);
 
+						// Asynchronously read a packet header.
 						ReadHeader();
 					} else {
 						SetDisconnected();

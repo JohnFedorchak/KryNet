@@ -73,19 +73,19 @@ namespace KryNet {
 			KRYNET_API bool is_connected(void) const;
 
 			/// <summary>Gets the local endpoint's port.</summary>
-			/// <returns>Returns the local endpoint's port.</returns>
+			/// <returns>Returns the local endpoint's port, or 0 if an error occurred.</returns>
 			KRYNET_API uint16_t local_port(void) const;
 
 			/// <summary>Gets the local endpoint's address.</summary>
-			/// <returns>Returns the local endpoint's address.</returns>
+			/// <returns>Returns the local endpoint's address, or an empty string if an error occurred.</returns>
 			KRYNET_API std::string local_address(void) const;
 
 			/// <summary>Gets the remote endpoint's port.</summary>
-			/// <returns>Returns the remote endpoint's port.</returns>
+			/// <returns>Returns the remote endpoint's port, or 0 if an error occurred.</returns>
 			KRYNET_API uint16_t remote_port(void) const;
 
 			/// <summary>Gets the remote endpoint's address.</summary>
-			/// <returns>Returns the remote endpoint's address.</returns>
+			/// <returns>Returns the remote endpoint's address, or an empty string if an error occurred.</returns>
 			KRYNET_API std::string remote_address(void) const;
 
 			KRYNET_API virtual ~IClient(void);
@@ -95,8 +95,16 @@ namespace KryNet {
 			void ReadHeader(void);
 			void ReadBody(void);
 
+			/// <summary>Called when a client has connected to the remote endpoint.</summary>
+			/// <param name="error">Set to indicate what error occurred, if any.</param>
+			/// <remarks>This callback is called even if connection was not successful. <paramref name="error"> must be checked for success.</remarks>
 			virtual void Event_OnConnected(const ConnectError& error) = 0;
+
+			/// <summary>Called when a packet has been received from the remote endpoint.</summary>
+			/// <param name="packet">The packet that was received.</param>
 			virtual void Event_OnPacketReceived(const Packet& packet) = 0;
+
+			/// <summary>Called when the client has been disconnected from the remote endpoint.</summary>
 			virtual void Event_OnDisconnected(void) = 0;
 		};
 	}
