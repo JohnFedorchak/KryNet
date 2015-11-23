@@ -23,12 +23,6 @@
 #define KRYNET_API __declspec(dllimport)
 #endif
 
-//namespace boost {
-//	namespace system {
-//		class error_code;
-//	}
-//}
-
 namespace KryNet {
 	class Packet;
 
@@ -41,41 +35,66 @@ namespace KryNet {
 		class IClient {
 			struct Imp;
 			std::unique_ptr<Imp> imp_;
-			
 		public:
-			// Constructors
 			KRYNET_API IClient(void);
 
-			// Methods
-			KRYNET_API virtual bool Connect(const std::string& szHost, uint16_t uPort);
-			KRYNET_API virtual bool Connect(const std::string& szHost, const std::string& szService);
+			/// <summary>Connects the client to a remote endpoint.</summary>
+			/// <param name="host">The host to connect to.</param>
+			/// <param name="port">The port to connect to.</param>
+			/// <returns>Returns true if a connection was successfully established.</returns>
+			KRYNET_API virtual bool Connect(const std::string& host, uint16_t port);
 
-			KRYNET_API void ConnectAsync(const std::string& szHost, uint16_t uPort);
-			KRYNET_API void ConnectAsync(const std::string& szHost, const std::string& szService);
+			/// <summary>Connects the client to a remote endpoint.</summary>
+			/// <param name="host">The host to connect to.</param>
+			/// <param name="service">The service to connect to.</param>
+			/// <returns>Returns true if a connection was successfully established.</returns>
+			KRYNET_API virtual bool Connect(const std::string& host, const std::string& service);
 
+			/// <summary>Asynchronously connects the client to a remote endpoint.</summary>
+			/// <param name="host">The host to connect to.</param>
+			/// <param name="port">The port to connect to.</param>
+			KRYNET_API void ConnectAsync(const std::string& host, uint16_t port);
+
+			/// <summary>Asynchronously connects the client to a remote endpoint.</summary>
+			/// <param name="host">The host to connect to.</param>
+			/// <param name="service">The service to connect to.</param>
+			KRYNET_API void ConnectAsync(const std::string& host, const std::string& service);
+
+			/// <summary>Sends a packet to the remote endpoint.</summary>
+			/// <param name="packet">The packet to send.</param>
+			/// <returns>Returns true if the full packet was successfully sent.</returns>
 			KRYNET_API bool Send(Packet& packet);
 
+			/// <summary>Disconnects the client from the remote endpoint.</summary>
 			KRYNET_API void Disconnect(void);
 
-			// Getters
-			KRYNET_API bool Connected(void) const;
+			/// <summary>Gets whether the client is currently connected to a remote endpoint.</summary>
+			/// <returns>Returns true if the client is currently connected to a remote endpoint.</returns>
+			KRYNET_API bool is_connected(void) const;
 
-			KRYNET_API uint16_t LocalPort(void) const;
-			KRYNET_API std::string LocalAddress(void) const;
+			/// <summary>Gets the local endpoint's port.</summary>
+			/// <returns>Returns the local endpoint's port.</returns>
+			KRYNET_API uint16_t local_port(void) const;
 
-			KRYNET_API uint16_t RemotePort(void) const;
-			KRYNET_API std::string RemoteAddress(void) const;
+			/// <summary>Gets the local endpoint's address.</summary>
+			/// <returns>Returns the local endpoint's address.</returns>
+			KRYNET_API std::string local_address(void) const;
 
-			// Destructor
+			/// <summary>Gets the remote endpoint's port.</summary>
+			/// <returns>Returns the remote endpoint's port.</returns>
+			KRYNET_API uint16_t remote_port(void) const;
+
+			/// <summary>Gets the remote endpoint's address.</summary>
+			/// <returns>Returns the remote endpoint's address.</returns>
+			KRYNET_API std::string remote_address(void) const;
+
 			KRYNET_API virtual ~IClient(void);
 		private:
-			// Methods
 			void SetDisconnected(void);
 
 			void ReadHeader(void);
 			void ReadBody(void);
 
-			// Callbacks
 			virtual void Event_OnConnected(const ConnectError& error) = 0;
 			virtual void Event_OnPacketReceived(const Packet& packet) = 0;
 			virtual void Event_OnDisconnected(void) = 0;

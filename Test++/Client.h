@@ -23,7 +23,7 @@ public:
 	// Callbacks
 	void Client::Event_OnConnected(const ConnectError& error) override {
 		if (error == ConnectError::SUCCESS) {
-			cout << format("Client %1%: Connected to %2%:%3%!") % identifier_ % RemoteAddress() % RemotePort() << endl;
+			cout << format("Client %1%: is_connected to %2%:%3%!") % identifier_ % remote_address() % remote_port() << endl;
 
 			// Create an info packet containing a string.
 			InfoPacket packet(InfoPacket::InfoType::STRING);
@@ -91,7 +91,7 @@ public:
 };
 
 inline std::ostream& operator<<(std::ostream& os, const Client& client) {
-	os << format("[Client (ID=%1%) (Connected=%2%)]") % client.identifier_ % client.Connected();
+	os << format("[Client (ID=%1%) (is_connected=%2%)]") % client.identifier_ % client.is_connected();
 	return os;
 }
 

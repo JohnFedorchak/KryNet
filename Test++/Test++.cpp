@@ -18,7 +18,7 @@ int _tmain(int argc, _TCHAR* argv[]) {
 	}
 
 	// Wait for client to disconnect.
-	while (clientSync.Connected()) {
+	while (clientSync.is_connected()) {
 		Sleep(10);
 	}
 

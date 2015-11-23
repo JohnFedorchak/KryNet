@@ -123,11 +123,11 @@ namespace KryNet {
 			}
 		}
 
-		bool IClient::Connected() const {
+		bool IClient::is_connected() const {
 			return imp_->connected;
 		}
 
-		uint16_t IClient::LocalPort() const {
+		uint16_t IClient::local_port() const {
 			try {
 				return imp_->socket->local_endpoint().port();
 			} catch (std::exception&) {
@@ -135,7 +135,7 @@ namespace KryNet {
 			}
 		}
 
-		std::string IClient::LocalAddress() const {
+		std::string IClient::local_address() const {
 			try {
 				return imp_->socket->local_endpoint().address().to_string();
 			} catch (std::exception&) {
@@ -143,7 +143,7 @@ namespace KryNet {
 			}
 		}
 
-		uint16_t IClient::RemotePort() const {
+		uint16_t IClient::remote_port() const {
 			try {
 				return imp_->socket->remote_endpoint().port();
 			} catch (std::exception&) {
@@ -151,7 +151,7 @@ namespace KryNet {
 			}
 		}
 
-		std::string IClient::RemoteAddress() const {
+		std::string IClient::remote_address() const {
 			try {
 				return imp_->socket->remote_endpoint().address().to_string();
 			} catch (std::exception&) {
