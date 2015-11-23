@@ -15,5 +15,22 @@
 *
 */
 
-#include "stdafx.h"
+#pragma once
+
+#ifdef KRYNET_EXPORTS
+#define KRYNET_API __declspec(dllexport)
+#else
+#define KRYNET_API __declspec(dllimport)
+#endif
+
+namespace KryNet {
+	class Utility {
+	public:
+		Utility(void);
+
+		static KRYNET_API std::string BytesToHex(const BYTE* pBytes, size_t uLen, LPCSTR szSeparator = "");
+
+		~Utility(void);
+	};
+}
 

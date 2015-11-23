@@ -1,3 +1,20 @@
+/*
+* Copyright 2015 John Fedorchak
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+
+* http://www.apache.org/licenses/LICENSE-2.0
+
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*/
+
 #pragma once
 
 using HEADER_TYPE = uint16_t;
@@ -105,7 +122,7 @@ namespace KryNet {
 
 		T t;
 
-		memcpy_s(&t, uSize, &data_[uOffset], uSize);
+		memcpy_s(&t, uSize, &data_[header_size + uOffset], uSize);
 
 		return t;
 	}
@@ -119,7 +136,7 @@ namespace KryNet {
 		}
 
 		auto pSource = reinterpret_cast<const BYTE*>(std::addressof(t));
-		memcpy_s(LPVOID(Body() + uOffset), sizeof(T), pSource, sizeof(T));
+		memcpy_s(&data_[header_size + uOffset], sizeof(T), pSource, sizeof(T));
 
 		body_size_ += sizeof(T);
 

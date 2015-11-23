@@ -20,4 +20,5 @@
 
 #include "Packet.h"
 #include "TCP/IClient.h"
+#include <Utility.h>
 

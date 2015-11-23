@@ -36,22 +36,10 @@ public:
 		}
 	}
 
-	static std::string hexStr(const BYTE* array, size_t len) {
-		std::stringstream ss;
-
-		ss << std::hex << std::uppercase << std::setfill('0');
-
-		for (size_t i = 0; i < len; i++) {
-			ss << std::setw(2) << static_cast<int>(array[i]) << " ";
-		}
-
-		return ss.str();
-	}
-
 	void Client::Event_OnPacketReceived(const Packet& packet) override {
 		cout << format("Client %1%: Packet received!") % identifier_ << endl;
 		cout << format("\tSize: %1% Bytes") % packet.Size() << endl;
-		cout << format("\tData: %1%") % hexStr(packet.Body(), packet.BodySize()) << endl;
+		cout << format("\tData: %1%") % Utility::BytesToHex(packet.Body(), packet.BodySize(), " ") << endl;
 
 		MyPacket myPacket(packet);
 
@@ -63,13 +51,32 @@ public:
 					case InfoPacket::InfoType::STRING:
 						cout << format("\tINFO::STRING = %1%") % (infoPacket.Data() + 2) << endl;
 						break;
-					default: break;
+					default:
+						break;
 				}
 				break;
 			}
-			case MyPacket::PacketType::REQUEST: break;
-			case MyPacket::PacketType::RESPONSE: break;
-			default: break;
+			case MyPacket::PacketType::RESPONSE: {
+				ResponsePacket responsePacket(myPacket);
+
+				switch (responsePacket.SubType()) {
+					case ResponsePacket::ResponseType::LOGIN: {
+						auto loginData = responsePacket.Data<ResponsePacket::LoginData>();
+
+						if (loginData.success) {
+							cout << "Successfully logged in!" << endl;
+						} else {
+							cout << format("Login failed. Reason: %1%.") % stringify(loginData.error) << endl;
+						}
+						break;
+					}
+					default:
+						break;
+				}
+				break;
+			}
+			default:
+				break;
 		}
 	}
 

@@ -1,43 +1,6 @@
 #pragma once
 
-enum MessageType : BYTE {
-	// A packet that does not signify a request and does not need a response.
-	MSG_INFO,
-
-	// A packet signifying a request.
-	MSG_REQUEST,
-
-	// A packet signifying a response to a request.
-	MSG_RESPONSE
-};
-
-// TODO: Rename this.
-enum MessageSubType : BYTE {
-	SUBTYPE_STRING,
-
-	SUBTYPE_LOGIN,
-
-	SUBTYPE_FILE
-};
-
-//class SuperPacket : public KryNet::Packet {
-//public:
-//	SuperPacket(MessageType type, MessageSubType subType) : Packet() {
-//		PutBack(type);
-//		PutBack(subType);
-//	}
-//
-//	SuperPacket(Packet const& packet) : Packet(packet) {
-//	}
-//
-//	MessageType Type(void) {
-//		return Peek<MessageType>(0);
-//	}
-//
-//	MessageSubType SubType(void) {
-//		return Peek<MessageSubType>(sizeof(MessageType));
-//	}
-//};
+#define stringify(enum_name) # enum_name
 
 class MyPacket : public KryNet::Packet {
 public:
@@ -47,6 +10,7 @@ public:
 		RESPONSE
 	};
 
+	// Constructors
 	MyPacket(PacketType packetType) {
 		PutBack(packetType);
 	}
@@ -54,6 +18,7 @@ public:
 	MyPacket(const Packet& other) : Packet(other) {
 	}
 
+	// Getters
 	PacketType Type(void) {
 		return Peek<PacketType>(0);
 	}
@@ -65,6 +30,7 @@ public:
 		STRING
 	};
 
+	// Constructors
 	InfoPacket(InfoType infoType) : MyPacket(PacketType::INFO) {
 		PutBack(infoType);
 	}
@@ -72,32 +38,75 @@ public:
 	InfoPacket(MyPacket const& myPacket) : MyPacket(myPacket) {
 	}
 
+	// Getters
 	InfoType SubType(void) {
 		return Peek<InfoType>(sizeof(PacketType));
 	}
+
 };
 
-//class RequestPacket : public MyPacket {
-//public:
-//	enum class RequestType : BYTE {
-//		LOGIN,
-//		FILE
-//	};
-//
-//	RequestPacket(RequestType requestType) : MyPacket(PacketType::REQUEST) {
-//		PutBack(requestType);
-//	}
-//};
-//
-//class ResponsePacket : public MyPacket {
-//public:
-//	enum class ResponseType : BYTE {
-//		LOGIN,
-//		FILE
-//	};
-//
-//	ResponsePacket(ResponseType responseType) : MyPacket(PacketType::RESPONSE) {
-//		PutBack(responseType);
-//	}
-//};
+class RequestPacket : public MyPacket {
+public:
+	enum class RequestType : BYTE {
+		LOGIN,
+		FILE
+	};
+
+	struct LoginData {
+		char username[32];
+		char password[32];
+	};
+
+	// Constructors
+	RequestPacket(RequestType requestType) : MyPacket(PacketType::REQUEST) {
+		PutBack(requestType);
+	}
+
+	RequestPacket(MyPacket const& myPacket) : MyPacket(myPacket) {
+	}
+
+	// Getters
+	RequestType SubType(void) {
+		return Peek<RequestType>(sizeof(RequestType));
+	}
+
+	LoginData Data(void) {
+		return Peek<LoginData>(sizeof(PacketType) + sizeof(RequestType));
+	}
+};
+
+class ResponsePacket : public MyPacket {
+public:
+	enum class ResponseType : BYTE {
+		LOGIN,
+		FILE
+	};
+
+	struct LoginData {
+		bool success;
+
+		enum class Error {
+			INVALID_CREDENTIALS,
+			ACCOUNT_BANNED
+		} error;
+	};
+
+	// Constructors
+	ResponsePacket(ResponseType responseType) : MyPacket(PacketType::RESPONSE) {
+		PutBack(responseType);
+	}
+
+	ResponsePacket(MyPacket const& myPacket) : MyPacket(myPacket) {
+	}
+
+	// Getters
+	ResponseType SubType(void) {
+		return Peek<ResponseType>(sizeof(ResponseType));
+	}
+
+	template <class T>
+	T Data(void) {
+		return Peek<T>(sizeof(PacketType) + sizeof(ResponseType));
+	}
+};
 
