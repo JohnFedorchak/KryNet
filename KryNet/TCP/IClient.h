@@ -33,7 +33,6 @@ namespace KryNet {
 
 	namespace TCP {
 		class IClient {
-			// 
 			struct Imp;
 			std::unique_ptr<Imp> imp_;
 		public:
@@ -43,13 +42,13 @@ namespace KryNet {
 			/// <param name="host">The host to connect to.</param>
 			/// <param name="port">The port to connect to.</param>
 			/// <returns>Returns true if a connection was successfully established.</returns>
-			KRYNET_API virtual bool Connect(const std::string& host, uint16_t port);
+			KRYNET_API bool Connect(const std::string& host, uint16_t port);
 
 			/// <summary>Connects the client to a remote endpoint.</summary>
 			/// <param name="host">The host to connect to.</param>
 			/// <param name="service">The service to connect to.</param>
 			/// <returns>Returns true if a connection was successfully established.</returns>
-			KRYNET_API virtual bool Connect(const std::string& host, const std::string& service);
+			KRYNET_API bool Connect(const std::string& host, const std::string& service);
 
 			/// <summary>Asynchronously connects the client to a remote endpoint.</summary>
 			/// <param name="host">The host to connect to.</param>

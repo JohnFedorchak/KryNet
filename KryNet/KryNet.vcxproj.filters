@@ -36,6 +36,9 @@
     <ClInclude Include="Utility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TCP\IServer.h">
+      <Filter>Header Files\TCP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -52,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="Utility.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TCP\IServer.cpp">
+      <Filter>Source Files\TCP</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

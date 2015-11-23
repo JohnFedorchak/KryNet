@@ -17,11 +17,10 @@
 
 #include "stdafx.h"
 #include "IClient.h"
-#include "../Packet.h"
+#include "Packet.h"
 
 using boost::asio::ip::tcp;
-
-//#include "boost/system/error_code.hpp"
+using boost::asio::ip::address;
 
 namespace KryNet {
 	namespace TCP {
@@ -51,14 +50,14 @@ namespace KryNet {
 		IClient::IClient() : imp_(new Imp()) {
 		}
 
-		bool IClient::Connect(const std::string& szHost, uint16_t uPort) {
-			return Connect(szHost, std::to_string(uPort));
+		bool IClient::Connect(const std::string& host, uint16_t port) {
+			return Connect(host, std::to_string(port));
 		}
 
-		bool IClient::Connect(const std::string& szHost, const std::string& szService) {
+		bool IClient::Connect(const std::string& host, const std::string& service) {
 			try {
 				// Query and resolve the host and service into endpoints.
-				tcp::resolver::query query(szHost, szService);
+				tcp::resolver::query query(tcp::v4(), host, service);
 
 				auto endpoint_iter = imp_->resolver->resolve(query);
 
@@ -81,13 +80,13 @@ namespace KryNet {
 			return true;
 		}
 
-		void IClient::ConnectAsync(const std::string& szHost, uint16_t uPort) {
-			ConnectAsync(szHost, std::to_string(uPort));
+		void IClient::ConnectAsync(const std::string& host, uint16_t port) {
+			ConnectAsync(host, std::to_string(port));
 		}
 
-		void IClient::ConnectAsync(const std::string& szHost, const std::string& szService) {
+		void IClient::ConnectAsync(const std::string& host, const std::string& service) {
 			// Query and resolve the host and service into endpoints.
-			tcp::resolver::query query(szHost, szService);
+			tcp::resolver::query query(host, service);
 
 			auto endpoint_iter = imp_->resolver->resolve(query);
 
