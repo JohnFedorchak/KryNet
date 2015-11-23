@@ -33,6 +33,7 @@ namespace KryNet {
 
 	namespace TCP {
 		class IClient {
+			// 
 			struct Imp;
 			std::unique_ptr<Imp> imp_;
 		public:

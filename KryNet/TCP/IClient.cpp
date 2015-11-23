@@ -33,6 +33,7 @@ namespace KryNet {
 				socket(new tcp::socket(*io_service)),
 				connected(false),
 				receive_packet(new Packet()) {
+				// Run the IO Service in a new thread.
 				boost::thread thread(boost::bind(&boost::asio::io_service::run, io_service.get()));
 			}
 
@@ -42,7 +43,7 @@ namespace KryNet {
 			std::shared_ptr<tcp::resolver> resolver;
 
 			std::shared_ptr<tcp::socket> socket;
-			std::atomic_bool connected; // TODO: Make pointer?
+			std::atomic_bool connected; // TODO: Wrap this in a pointer?
 
 			std::shared_ptr<Packet> receive_packet;
 		};
@@ -56,6 +57,7 @@ namespace KryNet {
 
 		bool IClient::Connect(const std::string& szHost, const std::string& szService) {
 			try {
+				// Query and resolve the host and service into endpoints.
 				tcp::resolver::query query(szHost, szService);
 
 				auto endpoint_iter = imp_->resolver->resolve(query);
@@ -84,6 +86,7 @@ namespace KryNet {
 		}
 
 		void IClient::ConnectAsync(const std::string& szHost, const std::string& szService) {
+			// Query and resolve the host and service into endpoints.
 			tcp::resolver::query query(szHost, szService);
 
 			auto endpoint_iter = imp_->resolver->resolve(query);
@@ -110,7 +113,7 @@ namespace KryNet {
 
 		bool IClient::Send(Packet& packet) {
 			try {
-				// Write the full packet data to the socket.
+				// Write data from the packet's buffer to the socket.
 				boost::asio::write(*imp_->socket, boost::asio::buffer(packet.Data(), packet.Size()));
 			} catch (std::exception&) {
 				SetDisconnected();
@@ -173,9 +176,10 @@ namespace KryNet {
 		void IClient::SetDisconnected() {
 			try {
 				imp_->connected = false;
+
+				// Close the socket.
 				imp_->socket->close();
 			} catch (std::exception&) {
-
 			}
 
 			// Call user-handled callback.
@@ -183,8 +187,10 @@ namespace KryNet {
 		}
 
 		void IClient::ReadHeader() {
+			// Clear the packet data.
 			imp_->receive_packet->Clear();
 
+			// Read data from the socket into the receive packet's header.
 			boost::asio::async_read(
 				*imp_->socket,
 				boost::asio::buffer(imp_->receive_packet->Data(), Packet::header_size),
@@ -201,6 +207,7 @@ namespace KryNet {
 		}
 
 		void IClient::ReadBody() {
+			// Read data from the socket into the receive packet's body.
 			boost::asio::async_read(
 				*imp_->socket,
 				boost::asio::buffer(imp_->receive_packet->Body(), imp_->receive_packet->DecodeHeader()),

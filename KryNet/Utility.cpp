@@ -25,16 +25,20 @@ namespace KryNet {
 	std::string Utility::BytesToHex(const BYTE* bytes, size_t len, std::string separator) {
 		std::stringstream ss;
 
+		// Set the mode to uppercase hex, with values under 0x10 being padded with a zero.
 		ss << std::hex << std::uppercase << std::setfill('0');
 
 		for (size_t i = 0; i < len; i++) {
+			// Write the byte as a hex string.
 			ss << std::setw(2) << static_cast<int>(bytes[i]);
 
+			// Write the separator after every byte except the last one.
 			if (i < len - 1) {
 				ss << separator;
 			}
 		}
 
+		// Return the built string.
 		return ss.str();
 	}
 
