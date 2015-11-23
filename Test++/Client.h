@@ -91,7 +91,7 @@ public:
 };
 
 inline std::ostream& operator<<(std::ostream& os, const Client& client) {
-	os << format("[Client (ID=%1%) (is_connected=%2%)]") % client.identifier_ % client.is_connected();
+	os << format("[Client (ID=%1%) (Connected=%2%)]") % client.identifier_ % client.is_connected();
 	return os;
 }
 
